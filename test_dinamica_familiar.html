@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evaluación de Dinámica y Sintonía Familiar</title>
+    <style>
+        :root {
+            --bg-dark: #0f172a;
+            --card-bg: #1e293b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent: #38bdf8;
+            --accent-hover: #0284c7;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --safe: #10b981;
+            --border: #334155;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            width: 100%;
+            max-width: 650px;
+            padding: 32px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+            transition: all 0.3s ease;
+        }
+
+        h1 {
+            font-size: 1.6rem;
+            margin-bottom: 12px;
+            color: var(--text-main);
+            font-weight: 700;
+        }
+
+        p.subtitle {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-bottom: 24px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--accent);
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        input[type="text"]:focus {
+            border-color: var(--accent);
+        }
+
+        .btn {
+            display: inline-block;
+            width: 100%;
+            padding: 14px;
+            background-color: var(--accent);
+            color: #0f172a;
+            font-weight: 700;
+            font-size: 1rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .btn:hover {
+            background-color: var(--accent-hover);
+            color: #ffffff;
+        }
+
+        .btn:active {
+            transform: scale(0.99);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background-color: var(--bg-dark);
+            border-radius: 3px;
+            margin-bottom: 24px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background-color: var(--accent);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .question-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option-btn {
+            background-color: var(--bg-dark);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            padding: 14px 18px;
+            border-radius: 10px;
+            text-align: left;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            line-height: 1.4;
+        }
+
+        .option-btn:hover {
+            border-color: var(--accent);
+            background-color: rgba(56, 189, 248, 0.08);
+        }
+
+        /* Result styles */
+        .result-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 16px;
+        }
+
+        .score-box {
+            font-size: 2.8rem;
+            font-weight: 800;
+            margin: 10px 0 20px 0;
+        }
+
+        .diagnosis-text {
+            background-color: var(--bg-dark);
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid var(--accent);
+            margin-bottom: 20px;
+            font-size: 0.98rem;
+        }
+
+        .breakdown-list {
+            margin-top: 20px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .breakdown-list li {
+            margin-bottom: 8px;
+            margin-left: 20px;
+        }
+
+        .status-sending {
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 16px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <!-- PANTALLA 1: INICIO CAMUFLADO -->
+        <div id="step-intro">
+            <h1>Test de Dinámica y Sintonía Familiar</h1>
+            <p class="subtitle">Descubre cómo interactúa tu temperamento y tu energía cotidiana frente a las personas de
+                tu entorno cercano. Responde con lo primero que te venga a la mente.</p>
+
+            <div class="input-group">
+                <label for="respondent-id">ID o Alias de participante (1 solo identificador):</label>
+                <input type="text" id="respondent-id" placeholder="Ej. Iniciales, apodo o código" required>
+            </div>
+
+            <div class="input-group">
+                <label for="target-name">Nombre del familiar con quien deseas evaluar tu dinámica:</label>
+                <input type="text" id="target-name" placeholder="Ej. Mi papá, Tío Carlos, Mamá, Hermano..." required>
+            </div>
+
+            <button class="btn" onclick="startTest()">Comenzar Evaluación</button>
+        </div>
+
+        <!-- PANTALLA 2: PREGUNTAS INDIRECTAS -->
+        <div id="step-questions" class="hidden">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+            <div id="question-counter" style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 8px;"></div>
+            <div class="question-title" id="question-text"></div>
+            <div class="options-list" id="options-container"></div>
+        </div>
+
+        <!-- PANTALLA 3: RESULTADO (CRUDA REALIDAD) -->
+        <div id="step-result" class="hidden">
+            <span id="result-badge" class="result-badge">Diagnóstico Real</span>
+            <h1 id="result-title">Resultado del Análisis</h1>
+            <div class="score-box" id="result-score">0%</div>
+            <div class="diagnosis-text" id="result-description"></div>
+
+            <h3 style="font-size: 1.05rem; margin-bottom: 10px; color: var(--text-main);">Patrones detectados en tus
+                respuestas:</h3>
+            <ul class="breakdown-list" id="result-patterns"></ul>
+
+            <div id="sync-status" class="status-sending">Procesando registro...</div>
+        </div>
+    </div>
+
+    <script>
+        // =========================================================================
+        // CONFIGURACIÓN: SOLO PEGA TU CORREO AQUÍ ABAJO
+        // Nota: La primera vez que alguien termine el test, FormSubmit enviará un 
+        // correo de confirmación a esta dirección. Solo debes darle clic en "Activate"
+        // una única vez y todos los demás tests llegarán directo en automático.
+        // =========================================================================
+        const MI_CORREO = "ing.juan.lira@gmail.com";
+
+        let respondentId = "";
+        let targetName = "";
+        let currentQuestionIndex = 0;
+        let totalScore = 0;
+        let userAnswersLog = [];
+        let detectedFlags = [];
+
+        // Batería de 10 preguntas psicológicas indirectas (Escenarios de convivencia familiar)
+        const questions = [
+            {
+                q: "Estás descansando en casa en completo silencio y escuchas que {NOMBRE} acaba de llegar. ¿Cuál es tu primera reacción automática (antes de pensar)?",
+                dimension: "Hipervigilancia física",
+                options: [
+                    { text: "Sigo exactamente igual de relajado en lo que estaba haciendo.", pts: 0, flag: null },
+                    { text: "Pongo atención al sonido de sus pasos, su voz o cómo cerró la puerta para calcular de qué humor viene.", pts: 3, flag: "Monitoreo inconsciente de señales de peligro (pasos/tono de voz) para anticipar su estado de ánimo." },
+                    { text: "Se me corta el descanso y siento el impulso inmediato de verme ocupado o productivo.", pts: 2, flag: "Culpa o tensión automática al ser visto descansando frente a esa persona." },
+                    { text: "Me da gusto y salgo o me acerco con total naturalidad.", pts: 0, flag: null }
+                ]
+            },
+            {
+                q: "Rompes, pierdes o descompones por accidente algo en la casa que le importa a {NOMBRE}. ¿Qué pasa por tu mente en el primer segundo?",
+                dimension: "Respuesta ante el error",
+                options: [
+                    { text: "Pienso rápido cómo arreglarlo o esconderlo antes de que se dé cuenta para ahorrarme el problema.", pts: 3, flag: "Impulso de ocultamiento por temor desproporcionado a su reacción o estallido." },
+                    { text: "Le aviso de inmediato sin rodeos; sé que puede molestarle pero lo hablamos normal.", pts: 0, flag: null },
+                    { text: "Empiezo a ensayar mentalmente una explicación perfecta para que no suene tan grave cuando le diga.", pts: 2, flag: "Necesidad de sobre-justificarse para amortiguar el enojo del otro." },
+                    { text: "Siento un vacío en el estómago y prefiero retrasar el momento de decirle lo más posible.", pts: 3, flag: "Bloqueo visceral (miedo físico) ante la idea de enfrentar su desaprobación." }
+                ]
+            },
+            {
+                q: "En una comida familiar, {NOMBRE} hace un comentario o afirma algo con mucha seguridad que tú sabes perfectamente que es falso o injusto:",
+                dimension: "Autocensura y confrontación",
+                options: [
+                    { text: "Le digo en el momento y con toda calma que no estoy de acuerdo.", pts: 0, flag: null },
+                    { text: "Prefiero quedarme callado o darle por su lado; no vale la pena destapar el desgaste que se va a armar.", pts: 3, flag: "Sumisión preventiva: prefieres anular tu opinión antes que enfrentar su carácter." },
+                    { text: "Uso un tono muy suave, casi en broma o dándole vueltas, para corregirlo sin que sienta que lo contradigo.", pts: 2, flag: "Caminar sobre cáscaras de huevo al hablar para no detonar su ego o molestia." },
+                    { text: "Espero a que no esté presente para comentarlo con alguien más de la familia.", pts: 2, flag: "Evitación directa: incapacidad de sostener un desacuerdo de frente." }
+                ]
+            },
+            {
+                q: "Ves tu celular y tienes 3 llamadas perdidas seguidas de {NOMBRE} y un mensaje seco que dice: 'Háblame en cuanto puedas'.",
+                dimension: "Ansiedad anticipatoria",
+                options: [
+                    { text: "Le marco tranquilo pensando que a lo mejor necesita un favor o me quiere contar algo.", pts: 0, flag: null },
+                    { text: "Siento un golpe de tensión inmediato y repaso rápido: '¿Ahora qué hice o de qué se habrá enterado?'", pts: 3, flag: "Reflejo de culpa y amenaza: asocias su llamado con un interrogatorio o reclamo." },
+                    { text: "Me tardo unos minutos en devolver la llamada mientras pienso qué decir.", pts: 2, flag: "Evasión momentánea por incomodidad al hablar con esa persona." },
+                    { text: "Me preocupa que haya pasado alguna emergencia médica o familiar.", pts: 1, flag: null }
+                ]
+            },
+            {
+                q: "Tomas una decisión personal importante (un gasto tuyo, un viaje, un cambio de planes) que sabes que {NOMBRE} no aprueba:",
+                dimension: "Autonomía vs. Sometimiento",
+                options: [
+                    { text: "Lo comento con total normalidad; al final es mi vida y mis decisiones.", pts: 0, flag: null },
+                    { text: "Oculto el tema o maquillo los detalles (precios, fechas, motivos) para evitar su sermón o su cara.", pts: 3, flag: "Mentira defensiva: ocultas tu propia vida porque te intimida su juicio." },
+                    { text: "Se lo cuento pero automáticamente empiezo a justificarme aunque nadie me haya pedido explicaciones.", pts: 2, flag: "Subordinación psicológica: sigues pidiendo permiso implícito a través de excusas." },
+                    { text: "A veces termino cambiando o posponiendo mis planes con tal de mantener la fiesta en paz.", pts: 3, flag: "Renuncia a tu propia libertad para no incomodar a la figura de autoridad." }
+                ]
+            },
+            {
+                q: "Cuando {NOMBRE} entra en un silencio serio o se nota de mal humor, aunque no sea contigo:",
+                dimension: "Contagio y absorción de tensión",
+                options: [
+                    { text: "El ambiente se vuelve pesado para mí y me pongo alerta para no hacer nada que empeore las cosas.", pts: 3, flag: "Secuestro emocional: su mal humor controla tu tranquilidad y tus movimientos." },
+                    { text: "Lo dejo en su espacio y yo sigo con mi día sin que me afecte.", pts: 0, flag: null },
+                    { text: "Busco cómo aligerar el ambiente o hacerle algún favor para que se le baje el enojo.", pts: 2, flag: "Conducta de apaciguamiento: intentas calmar al 'agresor' potencial para sentirte a salvo." },
+                    { text: "Busco cualquier pretexto para salirme de ese cuarto o irme a otro lado.", pts: 2, flag: "Respuesta de huida física ante su presencia tensa." }
+                ]
+            },
+            {
+                q: "Necesitas pedirle a {NOMBRE} algo que te corresponde por derecho (dinero tuyo, un objeto prestado o que cumpla un acuerdo):",
+                dimension: "Asertividad y reclamo",
+                options: [
+                    { text: "Se lo pido directo y en el momento en que lo necesito.", pts: 0, flag: null },
+                    { text: "Busco el 'día perfecto' en que esté de muy buenas y aun así le doy rodeos como si le pidiera un favor.", pts: 3, flag: "Intimidación severa: te sientes incapaz de exigir lo tuyo si no está de buen humor." },
+                    { text: "Prefiero resolverlo por mi cuenta o dejarlo perder antes que tener esa conversación.", pts: 3, flag: "Parálisis por miedo al conflicto: prefieres perder algo tuyo que enfrentarlo." },
+                    { text: "Le mando mensaje en lugar de decírselo en persona para evitar ver su reacción.", pts: 2, flag: "Escudo digital: evitas el cara a cara porque su presencia te impone." }
+                ]
+            },
+            {
+                q: "{NOMBRE} decide irse de viaje o estar fuera varios días seguidos. ¿Cómo cambia la sensación en tu cuerpo y en tu rutina?",
+                dimension: "Contraste de alivio",
+                options: [
+                    { text: "Siento una ligereza difícil de explicar, como si por fin pudiera respirar y moverme sin que nadie me evalúe.", pts: 3, flag: "Alivio de liberación: la prueba más clara de que su presencia cotidiana te oprime o asusta." },
+                    { text: "Todo sigue prácticamente igual para mí.", pts: 0, flag: null },
+                    { text: "Se siente un poco más de calma porque hay menos reglas o exigencias, pero nada extremo.", pts: 1, flag: null },
+                    { text: "Extraño su presencia y el ambiente se siente vacío.", pts: 0, flag: null }
+                ]
+            },
+            {
+                q: "En una conversación uno a uno, cuando {NOMBRE} te sostiene la mirada fijamente con gesto serio:",
+                dimension: "Respuesta fisiológica al dominio",
+                options: [
+                    { text: "Le sostengo la mirada con naturalidad y escucho lo que dice.", pts: 0, flag: null },
+                    { text: "Siento incomodidad, desvío la vista rápido o empiezo a hablar de más para romper la tensión.", pts: 2, flag: "Reflejo de sumisión física ante su lenguaje corporal dominante." },
+                    { text: "Se me acelera el pulso o siento rigidez en los hombros/estómago.", pts: 3, flag: "Activación del sistema nervioso (alerta de amenaza) ante su sola mirada." },
+                    { text: "Me pongo a la defensiva de inmediato esperando un ataque.", pts: 2, flag: "Estado de guardia constante frente a esta persona." }
+                ]
+            },
+            {
+                q: "Si eres brutalmente honesto, ¿qué es lo que realmente evita que seas 100% transparente con {NOMBRE}?",
+                dimension: "Raíz del bloqueo",
+                options: [
+                    { text: "Nada, soy tal cual soy y digo lo que pienso sin problema.", pts: 0, flag: null },
+                    { text: "Su reacción: cuando no le parece algo, su forma de enojarse, gritar o atacar es desgastante.", pts: 3, flag: "Miedo directo a su agresividad verbal o estallidos de carácter." },
+                    { text: "El castigo silencioso: si lo contradigo, luego me aplica la ley del hielo, el chantaje o me retira su apoyo.", pts: 3, flag: "Miedo a la represalia emocional, manipulación o retiro de afecto/apoyo." },
+                    { text: "Simplemente tenemos ideas distintas y prefiero ahorrar tiempo.", pts: 1, flag: null }
+                ]
+            }
+        ];
+
+        function startTest() {
+            const idInput = document.getElementById("respondent-id").value.trim();
+            const nameInput = document.getElementById("target-name").value.trim();
+
+            if (!idInput || !nameInput) {
+                alert("Por favor completa ambos campos antes de continuar.");
+                return;
+            }
+
+            respondentId = idInput;
+            targetName = nameInput;
+
+            document.getElementById("step-intro").classList.add("hidden");
+            document.getElementById("step-questions").classList.remove("hidden");
+            renderQuestion();
+        }
+
+        function renderQuestion() {
+            const qObj = questions[currentQuestionIndex];
+            const progressPercent = ((currentQuestionIndex) / questions.length) * 100;
+            document.getElementById("progress-fill").style.width = progressPercent + "%";
+
+            document.getElementById("question-counter").innerText = `Pregunta ${currentQuestionIndex + 1} de ${questions.length}`;
+            document.getElementById("question-text").innerText = qObj.q.replace(/{NOMBRE}/g, targetName);
+
+            const optionsContainer = document.getElementById("options-container");
+            optionsContainer.innerHTML = "";
+
+            qObj.options.forEach((opt) => {
+                const btn = document.createElement("button");
+                btn.className = "option-btn";
+                btn.innerText = opt.text.replace(/{NOMBRE}/g, targetName);
+                btn.onclick = () => selectOption(qObj, opt);
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        function selectOption(qObj, selectedOpt) {
+            totalScore += selectedOpt.pts;
+
+            if (selectedOpt.flag) {
+                detectedFlags.push(selectedOpt.flag);
+            }
+
+            userAnswersLog.push({
+                pregunta: qObj.q.replace(/{NOMBRE}/g, targetName),
+                dimension: qObj.dimension,
+                respuesta: selectedOpt.text.replace(/{NOMBRE}/g, targetName),
+                puntos_miedo: `${selectedOpt.pts} / 3`
+            });
+
+            currentQuestionIndex++;
+
+            if (currentQuestionIndex < questions.length) {
+                renderQuestion();
+            } else {
+                finishTest();
+            }
+        }
+
+        function finishTest() {
+            document.getElementById("step-questions").classList.add("hidden");
+            document.getElementById("step-result").classList.remove("hidden");
+
+            const maxPossibleScore = questions.length * 3; // 30 puntos
+            const fearPercentage = Math.round((totalScore / maxPossibleScore) * 100);
+
+            const scoreEl = document.getElementById("result-score");
+            const badgeEl = document.getElementById("result-badge");
+            const titleEl = document.getElementById("result-title");
+            const descEl = document.getElementById("result-description");
+            const patternsEl = document.getElementById("result-patterns");
+
+            scoreEl.innerText = `${fearPercentage}% de Índice de Miedo / Sumisión`;
+
+            let diagnosisCategory = "";
+            let rawExplanation = "";
+
+            if (fearPercentage >= 65) {
+                diagnosisCategory = "MIEDO ACTIVO Y SOMETIMIENTO INCONSCIENTE";
+                badgeEl.style.backgroundColor = "rgba(239, 68, 68, 0.2)";
+                badgeEl.style.color = "var(--danger)";
+                scoreEl.style.color = "var(--danger)";
+                descEl.style.borderLeftColor = "var(--danger)";
+                titleEl.innerText = `La cruda realidad: Le tienes miedo a ${targetName}`;
+                rawExplanation = `Aunque lo disfraces de "respeto", "prudencia" o "querer llevar la fiesta en paz", tus respuestas revelan un patrón claro de <strong>miedo y subordinación psicológica</strong> frente a <strong>${targetName}</strong>. Tu cuerpo y tu mente entran en estado de alerta cuando está cerca: mides tus palabras, ocultas cosas o cedes tu propio espacio para evitar su enojo, su juicio o sus represalias. No estás en una relación familiar horizontal; estás actuando desde la autoprotección y el temor a su reacción.`;
+            } else if (fearPercentage >= 35) {
+                diagnosisCategory = "INTIMIDACIÓN ENCUBIERTA Y AUTOCENSURA";
+                badgeEl.style.backgroundColor = "rgba(245, 158, 11, 0.2)";
+                badgeEl.style.color = "var(--warning)";
+                scoreEl.style.color = "var(--warning)";
+                descEl.style.borderLeftColor = "var(--warning)";
+                titleEl.innerText = `La cruda realidad: ${targetName} te intimida más de lo que admites`;
+                rawExplanation = `No vives en pánico constante, pero <strong>${targetName} tiene poder sobre tu tranquilidad</strong>. Te autocensuras, calculas de qué humor viene antes de hablarle y prefieres callar o maquillar la verdad para evitar el desgaste de enfrentarlo. Eso no es diplomacia familiar, es <strong>miedo al conflicto y a su temperamento</strong>. Cuando una persona hace que dejes de ser tú mismo para no incomodarla, te impone miedo.`;
+            } else {
+                diagnosisCategory = "RELACIÓN HORIZONTAL / SIN MIEDO SIGNIFICATIVO";
+                badgeEl.style.backgroundColor = "rgba(16, 185, 129, 0.2)";
+                badgeEl.style.color = "var(--safe)";
+                scoreEl.style.color = "var(--safe)";
+                descEl.style.borderLeftColor = "var(--safe)";
+                titleEl.innerText = `No le tienes miedo a ${targetName}`;
+                rawExplanation = `Tus respuestas muestran autonomía emocional frente a <strong>${targetName}</strong>. Puedes estar en desacuerdo, cometer errores o descansar frente a esta persona sin que tu sistema nervioso se ponga en alerta ni sientas la necesidad de esconderte o justificarte.`;
+            }
+
+            badgeEl.innerText = diagnosisCategory;
+            descEl.innerHTML = rawExplanation;
+
+            patternsEl.innerHTML = "";
+            if (detectedFlags.length === 0) {
+                const li = document.createElement("li");
+                li.innerText = "No se detectaron indicadores de hipervigilancia, ocultamiento ni sumisión frente a esta persona.";
+                patternsEl.appendChild(li);
+            } else {
+                detectedFlags.forEach(flag => {
+                    const li = document.createElement("li");
+                    li.innerText = flag;
+                    patternsEl.appendChild(li);
+                });
+            }
+
+            sendResultsByEmail(fearPercentage, diagnosisCategory);
+        }
+
+        function sendResultsByEmail(percentage, category) {
+            const statusEl = document.getElementById("sync-status");
+
+            if (!MI_CORREO || MI_CORREO.includes("ing.juan.lira@gmail.com")) {
+                statusEl.innerText = "Modo local (Configura tu correo en la variable MI_CORREO del código para recibir los reportes).";
+                return;
+            }
+
+            // Construir tabla limpia para el correo
+            let payload = {
+                _subject: `Reporte Test Miedo: ID [${respondentId}] evaluó a [${targetName}] (${percentage}%)`,
+                _template: "table",
+                _captcha: "false",
+                "1_ID_Participante": respondentId,
+                "2_Persona_Evaluada": targetName,
+                "3_Porcentaje_Miedo": `${percentage}% (${totalScore} de 30 pts)`,
+                "4_Diagnostico": category,
+                "5_Alertas_Psicologicas": detectedFlags.join(" | ") || "Ninguna"
+            };
+
+            userAnswersLog.forEach((item, idx) => {
+                payload[`P${idx + 1}_${item.dimension}`] = `${item.respuesta} (${item.puntos_miedo})`;
+            });
+
+            fetch(`https://formsubmit.co/ajax/${MI_CORREO}`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Accept": "application/json"
+                },
+                body: JSON.stringify(payload)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    statusEl.innerText = "Diagnóstico completado.";
+                })
+                .catch(error => {
+                    statusEl.innerText = "Diagnóstico finalizado.";
+                });
+        }
+    </script>
+
+</body>
+
+</html>
